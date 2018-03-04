@@ -1,3 +1,3 @@
 export default {
-    bandendURL:"http://localhost:8000",
+    bandendURL: process.env.NODE_ENV === "production" ? "/verify" : "http://localhost:8000",
 }

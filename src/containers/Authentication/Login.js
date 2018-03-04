@@ -26,7 +26,7 @@ class Login extends Component{
 
         return(
             <form className={"form"}>
-                <span style={{color:'red'}}>{this.props.error}</span>
+                <span style={{color:'red'}}>{this.props.error}</span><br/>
                 <div className={"form-group"}>
                     <label>Username</label>
                     <input type={"text"} name="USERNAME" value={this.state.username} onChange={this.usernameChange}/>
