@@ -34,14 +34,14 @@ class CorrectionTable extends Component{
     };
 
     onCheckHandler=(row)=>{
-        console.log("Checkbox clicked",row);
+        //console.log("Checkbox clicked",row);
         let data={};
         let val=this.props.validations.filter((e)=>e.validation_id===this.props.validation);
         val=val[0]['field_unique'];
         val.forEach((v)=>{
             data[v]=this.props.issues.data[row][v]
         });
-        console.log(data);
+        //console.log(data);
         this.props.toggleChecked(this.props.validation,data);
     };
 
@@ -67,7 +67,7 @@ class CorrectionTable extends Component{
       columns.unshift(index_column);
 
 
-      console.log("Columns:",columns);
+      //console.log("Columns:",columns);
       let table=$('#corrTable').DataTable({
         "columns":columns,
         //"data":data,
@@ -78,9 +78,9 @@ class CorrectionTable extends Component{
           "className": "validated",
           "render": function(data, type, row, meta){
             if (row['__checked__']){
-              return `<div><span key=${row.__index__} style="margin-right:10px;" class="glyphicon glyphicon-expand expanded"></span><input key=${row.__index__} type='checkbox' checked />${data}</div>`;
+              return `<div><span key=${row.__index__} style="margin-right:10px;" class="glyphicon glyphicon-expand expanded"></span><input key=${row.__index__} type='checkbox' checked /></div>`;
             }
-            return `<div><span key=${row.__index__} style="margin-right:10px;" class="glyphicon glyphicon-expand expanded"></span><input key=${row.__index__} type='checkbox'  />${data}</div>`;
+            return `<div><span key=${row.__index__} style="margin-right:10px;" class="glyphicon glyphicon-expand expanded"></span><input key=${row.__index__} type='checkbox'  /></div>`;
           }}
         ]
       });
@@ -98,12 +98,12 @@ class CorrectionTable extends Component{
 
         //add child rows
         let mapping_var=this.getImageMap(this.props.validation);
-        console.log("Mapping variables",mapping_var);
+        //console.log("Mapping variables",mapping_var);
         table.rows().eq(0).each(index=>{
             let row=table.row(index);
             let row_data=row.data();
             let images=this.props.images;
-            console.log("raw data",row_data);
+            //console.log("raw data",row_data);
 
             Object.keys(mapping_var).map(issue_var=>{
                 let images_var=mapping_var[issue_var];
@@ -111,10 +111,10 @@ class CorrectionTable extends Component{
                     //console.log("comparing",e[images_var],"and",row_data[issue_var]);
 
                     return e[images_var]===row_data[issue_var]});
-                console.log("val",images_var,issue_var);
+                //console.log("val",images_var,issue_var);
             });
 
-            console.log("Filtered images:", images);
+            //console.log("Filtered images:", images);
 
             let children = $("<div></div>");
             images.forEach(im=>{
@@ -163,13 +163,13 @@ class CorrectionTable extends Component{
 
         table.$('.validated').on("change", (e)=>{
             let index=table.cell(e.currentTarget).data();
-            console.log("checkbox clicked", index);
+            //console.log("checkbox clicked", index);
             this.onCheckHandler(index);
         });
     };
 
     componentDidMount=()=>{
-        console.log("Component did mount");
+        //console.log("Component did mount");
         //this.createTable();
         //this.updateTable();
 
@@ -180,7 +180,7 @@ class CorrectionTable extends Component{
     }
 
     componentWillUnmount=()=>{
-        console.log("componentWillUnmount");
+        //console.log("componentWillUnmount");
         if ( $.fn.DataTable.isDataTable( '#corrTable' ) ) {
             $('#corrTable').DataTable().destroy();
         }
@@ -188,23 +188,23 @@ class CorrectionTable extends Component{
     };
 
     shouldComponentUpdate=(nextProps,nextState)=>{
-      console.log("Current props",this.props.issues.data);
-      console.log("Next props",nextProps.issues.data);
-      console.log("are props equal?",this.props.issues.data ===  nextProps.issues.data);
+      //console.log("Current props",this.props.issues.data);
+      //console.log("Next props",nextProps.issues.data);
+      //console.log("are props equal?",this.props.issues.data ===  nextProps.issues.data);
 
       return this.props.issues.data !==  nextProps.issues.data;
 
     };
 
     componentWillReceiveProps=()=>{
-        console.log("Component will recieve props");
+        //console.log("Component will recieve props");
         //let table=$('#corrTable').DataTable();
         //table.draw();
 
 
     };
     componentDidUpdate=()=>{
-        console.log("Component did update");
+        //console.log("Component did update");
         if (this.props.issues.schema.fields.length>0){
               this.createTable();
               this.updateTable();
@@ -213,7 +213,7 @@ class CorrectionTable extends Component{
 
         //let rows=this.formatData(this.props.issues.data,this.props.issues.schema);
 
-        console.log("Table data:",this.props.issues.data);
+        //console.log("Table data:",this.props.issues.data);
 
     };
 
