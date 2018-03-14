@@ -10,6 +10,10 @@ class Corrections extends Component{
 
     refreshHandler=(event)=>{
         event.preventDefault();
+        if(!this.props.validation){
+            alert("Validation must be set");
+            return;
+        }
         this.props.setIssues(this.props.validation,this.props.start,this.props.stop);
 
     };
