@@ -14,12 +14,14 @@ import thunk from "redux-thunk"
 import imagesReducer from "./store/reducers/images";
 import correctionsReducer from "./store/reducers/corrections";
 import authReducer from "./store/reducers/auth";
+import uiReducer from "./store/reducers/ui";
 import config from "./config";
 
 const rootReducer=combineReducers({
     images:imagesReducer,
     corrections:correctionsReducer,
-    auth:authReducer
+    auth:authReducer,
+    ui:uiReducer
 });
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

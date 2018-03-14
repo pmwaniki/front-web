@@ -1,5 +1,6 @@
 import * as actionTypes from "./actionTypes";
 import axios from "axios";
+import {spinnerOpenState} from './index'
 
 
 
@@ -58,12 +59,17 @@ export const getIssues = (validation,start,stop)=>{
         if (stop !== "") query=query + `&stop=${stop}`;
         axios.get(query,{headers:{authorization:getToken()}})
             .then(res_issues => {
+                dispatch(spinnerOpenState(true));
                 axios.get(`/api/history/?validation=${validation}`,{headers:{authorization:getToken()}})
                     .then(res_hist=>{
+                        dispatch(spinnerOpenState(false));
                         return dispatch(setIssues({history:res_hist.data,issues:res_issues.data}))
                     });
                 })
-            .catch(err => console.log(err));
+            .catch(err => {
+                console.log(err);
+                dispatch(spinnerOpenState(false));
+            });
     }
 };
 

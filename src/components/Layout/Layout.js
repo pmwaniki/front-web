@@ -1,5 +1,6 @@
 import React from "react";
 import {NavLink,Link} from "react-router-dom";
+import Spinner from "../UI/spinner/Spinner";
 
 
 const layout = (props)=>{
@@ -36,6 +37,7 @@ const layout = (props)=>{
     </div>
     <div>
       <div>{props.children}</div>
+      <Spinner/>
     </div>
 </div>
 
