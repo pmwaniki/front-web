@@ -98,31 +98,48 @@ class CorrectionTable extends Component{
 
         //add child rows
         let mapping_var=this.getImageMap(this.props.validation);
-        //console.log("Mapping variables",mapping_var);
+        console.log("Mapping variables",mapping_var);
         table.rows().eq(0).each(index=>{
             let row=table.row(index);
             let row_data=row.data();
             let images=this.props.images;
             //console.log("raw data",row_data);
+            let matches=[];
 
-            Object.keys(mapping_var).map(issue_var=>{
+
+            Object.keys(mapping_var).forEach(issue_var=>{
+
+                let image_var=mapping_var[issue_var];
+                images.forEach(e=>{
+                    //console.log("Comparing",e[image_var],row_data[issue_var]);
+                    if(String(e[image_var])===String(row_data[issue_var])){
+                        matches.push(e);
+                        //console.log("Matched",e,row_data);
+                    }
+                })
+
+            });
+            //console.log("All Matches",matches);
+
+
+            /*Object.keys(mapping_var).map(issue_var=>{
                 let images_var=mapping_var[issue_var];
                 images=images.filter(e=> {
                     //console.log("comparing",e[images_var],"and",row_data[issue_var]);
 
                     return e[images_var]===row_data[issue_var]});
                 //console.log("val",images_var,issue_var);
-            });
+            });*/
 
             //console.log("Filtered images:", images);
 
             let children = $("<div></div>");
-            images.forEach(im=>{
+            matches.forEach(im=>{
                 let image=$(`<img className="img-fluid" src=${config.bandendURL}${im.file_path} />`);
                 children.append(image);
             });
 
-            if(images.length===0){
+            if(matches.length===0){
                 children.append($(`<p style="color:red"><strong>No images available</strong></p>`));
             }
 

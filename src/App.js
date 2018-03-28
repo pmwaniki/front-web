@@ -25,7 +25,7 @@ class App extends Component {
                 <Switch>
                     <Route name="images" path="/images" component={Images} ></Route>
                     <Route name="corrections" path="/corrections" component={Corrections} />
-                    <Route path="/" component={Images}/>
+                    <Route path="/" component={Corrections}/>
 
 
                 </Switch>

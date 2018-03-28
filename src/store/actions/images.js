@@ -19,7 +19,7 @@ const setAllImages=(data)=>{
 
 export const getAllImages=()=>{
     return dispatch =>{
-        axios.get("/api?all=true",{headers:{authorization:getToken()}})
+        axios.get("/api",{headers:{authorization:getToken()}})
             .then(res =>{
                 dispatch(setAllImages(res.data));
             })
