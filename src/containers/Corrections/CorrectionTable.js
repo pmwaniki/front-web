@@ -2,8 +2,18 @@ import React , {Component} from "react";
 import {connect} from "react-redux";
 import * as actions from "../../store/actions/index";
 import config from "../../config";
-const $ = require('jquery');
-$.DataTable = require('datatables.net');
+import $ from 'jquery'
+
+//import 'datatables.net'
+//import 'datatables.net-buttons'
+
+import 'datatables.net-bs' ;
+import 'datatables.net-buttons-bs' ;
+import 'datatables.net-buttons/js/buttons.colVis.js' ;
+import 'datatables.net-buttons/js/buttons.flash.js';
+import 'datatables.net-buttons/js/buttons.html5.js' ;
+import 'datatables.net-buttons/js/buttons.print.js' ;
+
 
 
 
@@ -69,7 +79,13 @@ class CorrectionTable extends Component{
 
       //console.log("Columns:",columns);
       let table=$('#corrTable').DataTable({
-        "columns":columns,
+          'dom': '<"top" lf>t<"bottom" iprB>',
+          "columns":columns,
+          buttons: [
+              'copy', 'csv', 'excel', 'pdf', 'print'
+          ],
+
+
         //"data":data,
         "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]],
         "columnDefs":[
@@ -84,6 +100,7 @@ class CorrectionTable extends Component{
           }}
         ]
       });
+
 
 
 

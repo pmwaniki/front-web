@@ -61,7 +61,7 @@ class Corrections extends Component{
           </div>
           <div className="panel-body">
             <p>Issues for hosp</p>
-              {<CorrectionTable/>}
+              {this.props.validation_errors !== "" ? <h1>{this.props.validation_errors}</h1> : <CorrectionTable/>}
           </div>
       </div>
     );
@@ -72,6 +72,7 @@ const mapStateToProps = state=>{
     return {
         validations:state.corrections.validations,
         validation:state.corrections.validation,
+        validation_errors:state.corrections.errors,
         start:state.corrections.start,
         stop:state.corrections.stop
     }

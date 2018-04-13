@@ -7,6 +7,7 @@ const initialState={
     start:"",
     stop:"",
     issues:{schema:{fields:[]},data:[]},
+    errors:"",
     history:[]
 };
 
@@ -19,6 +20,7 @@ const reducer = (state=initialState,action) =>{
         case actionTypes.SET_VALIDATIONS_STOP: return {...state,stop:action.date};
         case actionTypes.SET_ISSUES: return {...state,issues: action.issues.issues,history:action.issues.history};
         case actionTypes.SET_HISTORY: return {...state,history:action.history};
+        case actionTypes.SET_VALIDATTION_ERRORS: return {...state,errors:action.errors};
         default: return state;
 
     }

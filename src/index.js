@@ -31,6 +31,7 @@ const store = createStore(rootReducer,
 );
 
 axios.defaults.baseURL = config.bandendURL ;
+axios.defaults.crossDomain = true;
 axios.interceptors.request.use( config=>{
   console.log("requesting:",config);
   return config;

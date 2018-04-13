@@ -11,7 +11,7 @@ const getToken=()=>{
 
 const setValidations=(data)=>{
     return { type:actionTypes.SET_VALIDATIONS,validations:data}
-}
+};
 
 
 export const getValidations=()=>{
@@ -20,7 +20,7 @@ export const getValidations=()=>{
         axios.get("/api/validations/")
             .then(res => dispatch(setValidations(res.data)));
     }
-}
+};
 
 export const setValidationStart=(date)=>{
     return{
@@ -44,30 +44,44 @@ export const setValidation=(validation)=>{
 };
 
 const setIssues=(data) =>{
-    console.log(data);
+    //console.log(data);
     return {
         type:actionTypes.SET_ISSUES,
         issues:data
     }
 };
 
+const setValidationErrors=(errors)=>{
+    return {
+        type:actionTypes.SET_VALIDATTION_ERRORS,
+        errors:errors
+    }
+
+};
 
 export const getIssues = (validation,start,stop)=>{
     return dispatch=>{
         let query=`/api/issues/?validation=${validation}`;
         if (start !== "") query=query + `&start=${start}`;
         if (stop !== "") query=query + `&stop=${stop}`;
+        dispatch(spinnerOpenState(true));
+        dispatch(setValidationErrors(''));
         axios.get(query,{headers:{authorization:getToken()}})
             .then(res_issues => {
-                dispatch(spinnerOpenState(true));
+
                 axios.get(`/api/history/?validation=${validation}`,{headers:{authorization:getToken()}})
                     .then(res_hist=>{
                         dispatch(spinnerOpenState(false));
                         return dispatch(setIssues({history:res_hist.data,issues:res_issues.data}))
-                    });
+                    })
+                    .catch(err=>{
+                        console.log( err);
+                    })
+                ;
                 })
             .catch(err => {
-                console.log(err);
+                console.log("Validation fetch failed",err.response);
+                dispatch(setValidationErrors(err.response.data));
                 dispatch(spinnerOpenState(false));
             });
     }
