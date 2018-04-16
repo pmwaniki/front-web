@@ -152,7 +152,7 @@ class CorrectionTable extends Component{
 
             let children = $("<div></div>");
             matches.forEach(im=>{
-                let image=$(`<img className="img-fluid" src=${config.bandendURL}${im.file_path} />`);
+                let image=$(`<img style="max-width: 100%;height: auto" src=${config.bandendURL}${im.file_path} />`);
                 children.append(image);
             });
 

@@ -51,7 +51,7 @@ class ImageTable extends Component{
         //console.log("Row data",row.data());
         let child = $('<div></div>');
         row_data.files.forEach(file=>{
-          let image=$(`<img className="img-fluid" src=${config.bandendURL}${file.file_path} />`);
+          let image=$(`<img style="max-width: 100%;height: auto" src=${config.bandendURL}${file.file_path} />`);
           child.append(image);
         });
         //console.log("child appended",child.get(0));
