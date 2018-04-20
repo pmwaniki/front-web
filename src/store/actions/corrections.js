@@ -36,10 +36,11 @@ export const setValidationStop=(date)=>{
     }
 };
 
-export const setValidation=(validation)=>{
+export const setValidation=(validation,unique_fields)=>{
     return{
         type:actionTypes.SET_VALIDATION,
-        validation:validation
+        validation:validation,
+        unique_fields:unique_fields
     }
 };
 
@@ -94,6 +95,14 @@ const setHistory=(validation,data)=>{
         history: data
     }
 };
+export const notesChanged=(validation,data,text)=>{
+    return dispatch=>{
+        axios.post(`/api/history/`,{validation:validation,values:data,notes:text},{headers:{authorization:getToken()}})
+            .then(res =>{
+                dispatch(setHistory(validation,res.data));
+            });
+    }
+};
 export const changeHistory=(validation,data)=>{
     return dispatch=>{
         axios.post(`/api/history/`,{validation:validation,values:data},{headers:{authorization:getToken()}})
@@ -101,4 +110,25 @@ export const changeHistory=(validation,data)=>{
                 dispatch(setHistory(validation,res.data));
             });
     }
+};
+
+//NOTES MODAL
+export const setNotesModal=(open)=>{
+    return dispatch=>{
+        dispatch({
+            type:actionTypes.SET_NOTES_MODAL,
+            open:open
+        });
+    }
+
+};
+
+export const setModalRow=(row)=>{
+    return dispatch=>{
+        dispatch({
+            type:actionTypes.SET_NOTES_ROW,
+            row:row
+        });
+    }
+
 };

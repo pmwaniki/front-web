@@ -9,6 +9,8 @@ import $ from 'jquery'
 
 import 'datatables.net-bs' ;
 import 'datatables.net-buttons-bs' ;
+import 'datatables.net-select';
+import 'datatables.net-select-bs/css/select.bootstrap.css'
 import 'datatables.net-buttons/js/buttons.colVis.js' ;
 import 'datatables.net-buttons/js/buttons.flash.js';
 import 'datatables.net-buttons/js/buttons.html5.js' ;
@@ -19,20 +21,44 @@ import 'datatables.net-buttons/js/buttons.print.js' ;
 
 class CorrectionTable extends Component{
 
+
+
     checked=(row,history_data,uniqueVars) =>{
+        history_data=history_data.filter(h=> h.checked );
         if(history_data.length===0){
             return 0;
         }
+
         return history_data.map(hist=>{
 
             return uniqueVars.map( (vars)=> {
-                return hist.values[vars]===row[vars];
+                return hist.values[vars]===row[vars] & hist.checked;
 
             }).reduce((a,b)=>a*b);
 
         }).reduce((a,b)=>a||b);
 
 
+    };
+    getNote=(row,history_data,uniqueVars)=>{
+
+        history_data=history_data.filter(h=>  h.note !== '');
+        if(history_data.length===0){
+            return '';
+        }
+
+        let hist_row= history_data.filter(hist=>{
+            return uniqueVars.map( (vars)=> {
+                return hist.values[vars]===row[vars];
+
+            }).reduce((a,b)=>a*b);
+        });
+        //console.log("matched history record",hist_row);
+        if(hist_row.length===0){
+            return '';
+        }
+        console.log("Found one",hist_row[0]['note']);
+        return hist_row[0]['note'];
     };
     getUniqueVars=(validation)=>{
         let val=this.props.validations.filter((e)=>e.validation_id===validation);
@@ -46,13 +72,23 @@ class CorrectionTable extends Component{
     onCheckHandler=(row)=>{
         //console.log("Checkbox clicked",row);
         let data={};
-        let val=this.props.validations.filter((e)=>e.validation_id===this.props.validation);
-        val=val[0]['field_unique'];
+        let val=this.props.unique_fields;
+        val.forEach((v)=>{
+            data[v]=row[v]
+        });
+        //console.log(data);
+        this.props.toggleChecked(this.props.validation,data);
+    };
+
+    onChangeNotes=(row,text)=>{
+        let data={};
+        let val=this.props.unique_fields;
+
         val.forEach((v)=>{
             data[v]=this.props.issues.data[row][v]
         });
         //console.log(data);
-        this.props.toggleChecked(this.props.validation,data);
+        this.props.notesChanged(this.props.validation,data,text);
     };
 
     formatData=(data,schema)=>{
@@ -60,6 +96,7 @@ class CorrectionTable extends Component{
             let checked=this.checked(row,this.props.history,this.getUniqueVars(this.props.validation));
             row["__checked__"]=checked;
             row["__index__"]=index;
+            row["__note__"]=this.getNote(row,this.props.history,this.getUniqueVars(this.props.validation));
 
             return row;
         });
@@ -81,6 +118,8 @@ class CorrectionTable extends Component{
       let table=$('#corrTable').DataTable({
           'dom': '<"top" lf>t<"bottom" iprB>',
           "columns":columns,
+          "order": [[ 1, "asc" ]],
+          //"select":'single',
           buttons: [
               'copy', 'csv', 'excel', 'pdf', 'print'
           ],
@@ -89,14 +128,18 @@ class CorrectionTable extends Component{
         //"data":data,
         "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]],
         "columnDefs":[
-          {"targets":0,
-
-          "className": "validated",
+          {"targets":0,"orderable": true,
+          "className": "CustomColumn",
           "render": function(data, type, row, meta){
             if (row['__checked__']){
-              return `<div><span key=${row.__index__} style="margin-right:10px;" class="glyphicon glyphicon-expand expanded"></span><input key=${row.__index__} type='checkbox' checked /></div>`;
+              return `<div><span key=${row.__index__} class="glyphicon glyphicon-pencil edit" ></span>
+                            <span key=${row.__index__} style="margin-right:10px;" class="glyphicon glyphicon-picture expanded"></span>
+                            <input key=${row.__index__} type='checkbox' checked class="validated"/></div>`;
             }
-            return `<div><span key=${row.__index__} style="margin-right:10px;" class="glyphicon glyphicon-expand expanded"></span><input key=${row.__index__} type='checkbox'  /></div>`;
+            return `<div>
+                    <span key=${row.__index__} class="glyphicon glyphicon-pencil edit"></span>
+                    <span key=${row.__index__} style="margin-right:10px;" class="glyphicon glyphicon-picture expanded"></span>
+                    <input key=${row.__index__} type='checkbox' class="validated" /></div>`;
           }}
         ]
       });
@@ -139,15 +182,6 @@ class CorrectionTable extends Component{
             //console.log("All Matches",matches);
 
 
-            /*Object.keys(mapping_var).map(issue_var=>{
-                let images_var=mapping_var[issue_var];
-                images=images.filter(e=> {
-                    //console.log("comparing",e[images_var],"and",row_data[issue_var]);
-
-                    return e[images_var]===row_data[issue_var]});
-                //console.log("val",images_var,issue_var);
-            });*/
-
             //console.log("Filtered images:", images);
 
             let children = $("<div></div>");
@@ -167,16 +201,7 @@ class CorrectionTable extends Component{
         });
         table.draw();
 
-        /*$('#corrTable tbody').on("click","tr", e=>{
-            let row=table.row(e.currentTarget);
-            if(row.child.isShown()){
-                row.child.hide();
-                //row.removeClass("shown");
-            } else {
-                row.child.show();
-                //row.addClass("shown");
-            }
-        });*/
+
         table.$('.expanded').on("click",(e)=>{
             //
             let node=e.currentTarget;
@@ -193,12 +218,36 @@ class CorrectionTable extends Component{
 
         });
 
+        table.$('.edit').on("click",(e)=>{
+            //
+            let node=e.currentTarget;
+            let row_index=$(node).attr("key");
+            let row=table.row(row_index);
+            console.log("Text in row is: ",row.data());
+            this.props.setModalRow(row.data());
+            this.props.setNotesModal(true);
+
+
+        });
+
+        table.$('tr').on( 'click', (e)=> {
+
+            let row = e.currentTarget;
+            //find already selected rows
+            table.rows({'selected':true}).deselect();
+            row=table.row(row).select();
+
+
+            console.log("Selected row",row);
+        } );
+
+
 
 
         table.$('.validated').on("change", (e)=>{
-            let index=table.cell(e.currentTarget).data();
-            //console.log("checkbox clicked", index);
-            this.onCheckHandler(index);
+            let row=table.row(e.currentTarget.closest('tr')).data();
+            console.log("checkbox clicked", row);
+            this.onCheckHandler(row);
         });
     };
 
@@ -211,7 +260,7 @@ class CorrectionTable extends Component{
     };
     componentWillMount=()=>{
         this.props.setAllImages();
-    }
+    };
 
     componentWillUnmount=()=>{
         //console.log("componentWillUnmount");
@@ -226,7 +275,8 @@ class CorrectionTable extends Component{
       //console.log("Next props",nextProps.issues.data);
       //console.log("are props equal?",this.props.issues.data ===  nextProps.issues.data);
 
-      return this.props.issues.data !==  nextProps.issues.data;
+      //return this.props.issues.data !==  nextProps.issues.data;
+        return true;
 
     };
 
@@ -261,6 +311,7 @@ class CorrectionTable extends Component{
 
         return(
             <div>
+
                 <table id="corrTable" className={"table table-striped cell-border"}>
 
 
@@ -275,6 +326,7 @@ const mapStateToProps= state=>{
     return{
         validation: state.corrections.validation,
         validations: state.corrections.validations,
+        unique_fields:state.corrections.unique_fields,
         issues: state.corrections.issues,
         history: state.corrections.history,
         images:state.images.images_all
@@ -285,7 +337,10 @@ const mapStateToProps= state=>{
 const mapDispatchToProps=dispatch=>{
     return {
         toggleChecked: (validation,data)=>dispatch(actions.changeHistory(validation,data)),
-        setAllImages:()=>dispatch(actions.getAllImages())
+        notesChanged: (validation,data,text)=>dispatch(actions.notesChanged(validation,data,text)),
+        setAllImages:()=>dispatch(actions.getAllImages()),
+        setNotesModal: (open)=>dispatch(actions.setNotesModal(open)),
+        setModalRow: (row)=>dispatch(actions.setModalRow(row))
     }
 };
 

@@ -12,7 +12,10 @@ export {
     setValidationStart,
     setValidationStop,
     getIssues,
-    changeHistory
+    changeHistory,
+    notesChanged,
+    setNotesModal,
+    setModalRow
 } from "./corrections";
 
 export {

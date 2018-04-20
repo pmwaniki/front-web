@@ -31,7 +31,7 @@ class ImageTable extends Component{
                   'targets':0,
                   'className':'recordID',
                   'render':function(data,type,row,meta){
-                      return `<div><span key=${row.uniqueId} class="glyphicon glyphicon-expand expanded" style="margin-right: 10px;"></span>${data}</div>`
+                      return `<div><span key=${row.uniqueId} class="glyphicon glyphicon-picture expanded" style="margin-right: 10px;"></span>${data}</div>`
                   }
 
               }

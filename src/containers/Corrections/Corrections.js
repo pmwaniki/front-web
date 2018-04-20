@@ -2,6 +2,7 @@ import React,{Component} from "react";
 import * as actions from "../../store/actions/index";
 import {connect} from "react-redux";
 import CorrectionTable from "./CorrectionTable";
+import Notes from './Notes';
 
 
 class Corrections extends Component{
@@ -24,7 +25,11 @@ class Corrections extends Component{
         this.props.setStop(e.target.value);
     };
     changeValidation=(e) =>{
-        this.props.setValidation(e.target.value);
+        //get unique variables
+        let validation=e.target.value;
+        let val=this.props.validations.filter((e)=>e.validation_id===validation);
+        val=val[0]['field_unique'];
+        this.props.setValidation(validation,val);
         console.log("Selected:",e.target.value);
     }
 
@@ -61,6 +66,7 @@ class Corrections extends Component{
           </div>
           <div className="panel-body">
             <p>Issues for hosp</p>
+              <Notes/>
               {this.props.validation_errors !== "" ? <h1>{this.props.validation_errors}</h1> : <CorrectionTable/>}
           </div>
       </div>
@@ -81,7 +87,7 @@ const mapStateToProps = state=>{
 const mapDispatchToProps = dispatch =>{
     return {
         getValidations: () => dispatch(actions.getValidations()),
-        setValidation: (validation) => dispatch(actions.setValidation(validation)),
+        setValidation: (validation,unique_fields) => dispatch(actions.setValidation(validation,unique_fields)),
         setStart: (date)=> dispatch(actions.setValidationStart(date)),
         setStop: (date) => dispatch(actions.setValidationStop(date)),
         setIssues: (validation,start,stop) => dispatch(actions.getIssues(validation,start,stop)),
