@@ -21,10 +21,12 @@ class ImageTable extends Component{
       }
       let columns=[
         {"data":"recordID",title:'Record ID'},
-        {"data":"ipno","title":"Inpatient Number"}
+        {"data":"ipno","title":"Inpatient Number"},
+          {"data":"last_modified",title: "Last Modified"}
       ];
       let table=$('#main').DataTable({
           "columns":columns,
+          "order": [[ 2, "desc" ]],
           "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]],
           'columnDefs':[
               {

@@ -29,10 +29,12 @@ class Images extends Component{
     var groups=_.groupBy(data, (e) => `${e.record_id}___${e.ipno}`);
     //console.log("Group:",groups);
     return Object.keys(groups).map((key,index)=>{
+        let dates=groups[key].map(im=>im.date_created);
         return {
             uniqueId:key,
             recordID:key.split("___")[0],
             ipno:key.split("___")[1],
+            last_modified: dates.reduce((a,b)=> {return a>b ? a : b ;}),
             files:groups[key].map(file=>{return{date_created:file.date_created,file_path:file.file_path}})}
     });
   };
