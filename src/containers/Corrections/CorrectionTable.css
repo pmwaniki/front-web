@@ -1,0 +1,18 @@
+.withImage {
+    border-color: #b9b8bf;
+    border-style: inset;
+    border-width: 2px 10px 2px 20px;
+}
+
+.withNote {
+    border-color: #5cb85c;
+    border-style: inset;
+    border-width: 2px 10px 2px 20px;
+}
+
+.withImage.withNote {
+    border-color: #1915b8;
+    border-style: inset;
+    border-width: 2px 10px 2px 20px;
+
+}

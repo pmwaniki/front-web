@@ -16,6 +16,8 @@ import 'datatables.net-buttons/js/buttons.flash.js';
 import 'datatables.net-buttons/js/buttons.html5.js' ;
 import 'datatables.net-buttons/js/buttons.print.js' ;
 
+import './CorrectionTable.css';
+
 
 
 
@@ -192,9 +194,16 @@ class CorrectionTable extends Component{
 
             if(matches.length===0){
                 children.append($(`<p style="color:red"><strong>No images available</strong></p>`));
+            } else{
+                $(row.node()).addClass("withImage");
+            }
+            if(row_data["__note__"]){
+                $(row.node()).addClass("withNote");
             }
 
             row.child(children);
+
+
 
 
 
@@ -312,7 +321,7 @@ class CorrectionTable extends Component{
         return(
             <div>
 
-                <table id="corrTable" className={"table table-striped cell-border"}>
+                <table id="corrTable" className={"table cell-border"}>
 
 
                 </table>
