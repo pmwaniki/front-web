@@ -15,7 +15,9 @@ export {
     changeHistory,
     notesChanged,
     setNotesModal,
-    setModalRow
+    setModalRow,
+    setFilter,
+    setFilterHospital
 } from "./corrections";
 
 export {

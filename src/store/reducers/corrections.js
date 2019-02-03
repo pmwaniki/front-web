@@ -11,7 +11,9 @@ const initialState={
     errors:"",
     history:[],
     notes_modal_open:false,
-    notes_row:{__note__:''}
+    notes_row:{__note__:''},
+    filter:{verified:'all',notes:false},
+    hosp:"0",
 };
 
 
@@ -26,6 +28,8 @@ const reducer = (state=initialState,action) =>{
         case actionTypes.SET_VALIDATTION_ERRORS: return {...state,errors:action.errors};
         case actionTypes.SET_NOTES_ROW: return {...state,notes_row:action.row};
         case actionTypes.SET_NOTES_MODAL: return{...state,notes_modal_open:action.open};
+        case actionTypes.SET_FILTER: return{...state,filter:{...state.filter,...action.filter}};
+        case actionTypes.SET_FILTER_HOSPITAL: return {...state,hosp:action.hosp_id};
         default: return state;
 
     }

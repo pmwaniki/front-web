@@ -35,6 +35,18 @@ export const setValidationStop=(date)=>{
         date:date
     }
 };
+export const setFilterHospital=(hosp_id)=>{
+    return {
+        type: actionTypes.SET_FILTER_HOSPITAL, hosp_id: hosp_id
+    }
+};
+
+export const setFilter=(filter)=>{
+    return{
+        type:actionTypes.SET_FILTER,
+        filter:filter
+    }
+};
 
 export const setValidation=(validation,unique_fields)=>{
     return{
@@ -60,11 +72,12 @@ const setValidationErrors=(errors)=>{
 
 };
 
-export const getIssues = (validation,start,stop)=>{
+export const getIssues = (validation,start,stop,hosp)=>{
     return dispatch=>{
         let query=`/api/issues/?validation=${validation}`;
         if (start !== "") query=query + `&start=${start}`;
         if (stop !== "") query=query + `&stop=${stop}`;
+        if(hosp !== "0") query=query + `&hosp=${hosp}`;
         dispatch(spinnerOpenState(true));
         dispatch(setValidationErrors(''));
         axios.get(query,{headers:{authorization:getToken()}})

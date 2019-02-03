@@ -93,6 +93,12 @@ class CorrectionTable extends Component{
         this.props.notesChanged(this.props.validation,data,text);
     };
 
+    onFilterChange=(event)=>{
+        this.props.setFilter({verified:event.target.value});
+
+
+    };
+
     formatData=(data,schema)=>{
         return data.map((row,index)=>{
             let checked=this.checked(row,this.props.history,this.getUniqueVars(this.props.validation));
@@ -155,17 +161,23 @@ class CorrectionTable extends Component{
     updateTable=()=>{
         let table=$('#corrTable').DataTable();
         let data=this.formatData(this.props.issues.data,this.props.issues.schema);
+        console.log("Data:",data);
         table.clear();
         table.rows.add(data).draw();
 
         //add child rows
         let mapping_var=this.getImageMap(this.props.validation);
-        console.log("Mapping variables",mapping_var);
+        //console.log("Mapping variables",mapping_var);
+        let images=this.props.images;
+        let validation_id=this.props.validations.filter((v)=> v.validation_id===this.props.validation);
+        validation_id = validation_id[0].id;
+        images=images.filter(im=>im.validation===validation_id);
+        console.log("Validation id:",validation_id);
+
         table.rows().eq(0).each(index=>{
             let row=table.row(index);
             let row_data=row.data();
-            let images=this.props.images;
-            //console.log("raw data",row_data);
+
             let matches=[];
 
 
@@ -258,6 +270,38 @@ class CorrectionTable extends Component{
             console.log("checkbox clicked", row);
             this.onCheckHandler(row);
         });
+
+
+
+        //FILTER BY VERIFIED
+        $.fn.dataTable.ext.search.push(
+            (settings, datam, dataIndex) => {
+
+                //console.log("Filter evaluating value:",settings);
+                if(settings.nTable.id=="corrTable"){
+                    let checked=data[dataIndex]["__checked__"];
+                    if (this.props.filter.verified == "all"){
+                        return true
+                    } else if (this.props.filter.verified == "checked"){
+                        return checked ===1 ? true: false;
+                    } else if(this.props.filter.verified == "unchecked"){
+                        return checked===1 ? false: true;
+                    }
+                } else{
+                    return true;
+                }
+
+            }
+        );
+
+
+
+
+        table.draw();
+
+        console.log("Filter has been applied");
+
+        console.log("Table has just been updated");
     };
 
     componentDidMount=()=>{
@@ -320,6 +364,13 @@ class CorrectionTable extends Component{
 
         return(
             <div>
+                <p>Filter</p>
+                <label>Verified</label>
+                <select onChange={this.onFilterChange }>
+                    <option selected={this.props.filter.verified=="checked"} value="checked">Checked</option>
+                    <option selected={this.props.filter.verified=="unchecked"} value="unchecked">Unchecked</option>
+                    <option selected={this.props.filter.verified=="all"} value="all">All</option>
+                </select>
 
                 <table id="corrTable" className={"table cell-border"}>
 
@@ -338,7 +389,8 @@ const mapStateToProps= state=>{
         unique_fields:state.corrections.unique_fields,
         issues: state.corrections.issues,
         history: state.corrections.history,
-        images:state.images.images_all
+        images:state.images.images_all,
+        filter:state.corrections.filter,
 
     }
 };
@@ -349,7 +401,8 @@ const mapDispatchToProps=dispatch=>{
         notesChanged: (validation,data,text)=>dispatch(actions.notesChanged(validation,data,text)),
         setAllImages:()=>dispatch(actions.getAllImages()),
         setNotesModal: (open)=>dispatch(actions.setNotesModal(open)),
-        setModalRow: (row)=>dispatch(actions.setModalRow(row))
+        setModalRow: (row)=>dispatch(actions.setModalRow(row)),
+        setFilter: (filter)=>dispatch(actions.setFilter(filter))
     }
 };
 

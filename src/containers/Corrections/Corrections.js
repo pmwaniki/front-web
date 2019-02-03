@@ -15,7 +15,7 @@ class Corrections extends Component{
             alert("Validation must be set");
             return;
         }
-        this.props.setIssues(this.props.validation,this.props.start,this.props.stop);
+        this.props.setIssues(this.props.validation,this.props.start,this.props.stop,this.props.hosp);
 
     };
     changeStart = (e) =>{
@@ -23,6 +23,9 @@ class Corrections extends Component{
     };
     changeStop = (e) =>{
         this.props.setStop(e.target.value);
+    };
+    changeHosp=(e)=>{
+        this.props.setFilterHospital(e.target.value);
     };
     changeValidation=(e) =>{
         //get unique variables
@@ -58,6 +61,16 @@ class Corrections extends Component{
                     <input className='Date-input' type='date' value={this.props.stop} onChange={(e)=>this.changeStop(e)}/>
                 </div>
 
+                <div className="form-group">
+                    <label>Hospital</label>
+                    <select onChange={this.changeHosp}>
+                        <option value={0}>All</option>
+                        {this.props.hospitals.map((h)=>{
+                            return <option value={h.id} selected={this.props.hosp===h.id}>{h.name}</option>
+                        })}
+                    </select>
+                </div>
+
 
 
 
@@ -80,9 +93,11 @@ const mapStateToProps = state=>{
         validation:state.corrections.validation,
         validation_errors:state.corrections.errors,
         start:state.corrections.start,
-        stop:state.corrections.stop
+        stop:state.corrections.stop,
+        hosp: state.corrections.hosp,
+        hospitals:state.images.hospitals,
     }
-}
+};
 
 const mapDispatchToProps = dispatch =>{
     return {
@@ -90,7 +105,8 @@ const mapDispatchToProps = dispatch =>{
         setValidation: (validation,unique_fields) => dispatch(actions.setValidation(validation,unique_fields)),
         setStart: (date)=> dispatch(actions.setValidationStart(date)),
         setStop: (date) => dispatch(actions.setValidationStop(date)),
-        setIssues: (validation,start,stop) => dispatch(actions.getIssues(validation,start,stop)),
+        setIssues: (validation,start,stop,hosp) => dispatch(actions.getIssues(validation,start,stop,hosp)),
+        setFilterHospital: (h)=>dispatch(actions.setFilterHospital(h)),
     }
 
 };
