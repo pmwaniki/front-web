@@ -12,7 +12,7 @@ const initialState={
     history:[],
     notes_modal_open:false,
     notes_row:{__note__:''},
-    filter:{verified:'all',notes:false},
+    filter:{verified:'all',images:"all",notes:"all"},
     hosp:"0",
 };
 

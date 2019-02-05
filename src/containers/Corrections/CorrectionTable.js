@@ -93,8 +93,18 @@ class CorrectionTable extends Component{
         this.props.notesChanged(this.props.validation,data,text);
     };
 
-    onFilterChange=(event)=>{
+    onFilterChangeVerified=(event)=>{
         this.props.setFilter({verified:event.target.value});
+
+
+    };
+    onFilterChangeImages=(event)=>{
+        this.props.setFilter({images:event.target.value});
+
+
+    };
+    onFilterChangeNotes=(event)=>{
+        this.props.setFilter({notes:event.target.value});
 
 
     };
@@ -161,7 +171,7 @@ class CorrectionTable extends Component{
     updateTable=()=>{
         let table=$('#corrTable').DataTable();
         let data=this.formatData(this.props.issues.data,this.props.issues.schema);
-        console.log("Data:",data);
+        //console.log("Data:",data);
         table.clear();
         table.rows.add(data).draw();
 
@@ -174,6 +184,7 @@ class CorrectionTable extends Component{
         images=images.filter(im=>im.validation===validation_id);
         console.log("Validation id:",validation_id);
 
+        let index_with_images=[];
         table.rows().eq(0).each(index=>{
             let row=table.row(index);
             let row_data=row.data();
@@ -206,8 +217,10 @@ class CorrectionTable extends Component{
 
             if(matches.length===0){
                 children.append($(`<p style="color:red"><strong>No images available</strong></p>`));
+
             } else{
                 $(row.node()).addClass("withImage");
+                index_with_images.push(index);
             }
             if(row_data["__note__"]){
                 $(row.node()).addClass("withNote");
@@ -220,6 +233,7 @@ class CorrectionTable extends Component{
 
 
         });
+        //console.log("Index with images:",index_with_images);
         table.draw();
 
 
@@ -244,7 +258,7 @@ class CorrectionTable extends Component{
             let node=e.currentTarget;
             let row_index=$(node).attr("key");
             let row=table.row(row_index);
-            console.log("Text in row is: ",row.data());
+            //console.log("Text in row is: ",row.data());
             this.props.setModalRow(row.data());
             this.props.setNotesModal(true);
 
@@ -259,7 +273,7 @@ class CorrectionTable extends Component{
             row=table.row(row).select();
 
 
-            console.log("Selected row",row);
+            //console.log("Selected row",row);
         } );
 
 
@@ -267,7 +281,7 @@ class CorrectionTable extends Component{
 
         table.$('.validated').on("change", (e)=>{
             let row=table.row(e.currentTarget.closest('tr')).data();
-            console.log("checkbox clicked", row);
+            //console.log("checkbox clicked", row);
             this.onCheckHandler(row);
         });
 
@@ -286,6 +300,49 @@ class CorrectionTable extends Component{
                         return checked ===1 ? true: false;
                     } else if(this.props.filter.verified == "unchecked"){
                         return checked===1 ? false: true;
+                    }
+                } else{
+                    return true;
+                }
+
+            }
+        );
+
+        //FILTER BY Note
+        $.fn.dataTable.ext.search.push(
+            (settings, datam, dataIndex) => {
+
+                //console.log("Filter evaluating value:",settings);
+                if(settings.nTable.id=="corrTable"){
+                    let with_note=data[dataIndex]["__note__"] !=="";
+                    if (this.props.filter.notes == "all"){
+                        return true
+                    } else if (this.props.filter.notes == "present"){
+                        return with_note  ? true: false;
+                    } else if(this.props.filter.notes == "absent"){
+                        return with_note ? false: true;
+                    }
+                } else{
+                    return true;
+                }
+
+            }
+        );
+
+        //FILTER BY Presence of Images
+        $.fn.dataTable.ext.search.push(
+            (settings, datam, dataIndex) => {
+
+
+                if(settings.nTable.id=="corrTable"){
+                    let index=data[dataIndex]["__index__"];
+                    let with_image=index_with_images.includes(index);
+                    if (this.props.filter.images == "all"){
+                        return true
+                    } else if (this.props.filter.images == "present"){
+                        return with_image  ? true: false;
+                    } else if(this.props.filter.images == "absent"){
+                        return with_image ? false: true;
                     }
                 } else{
                     return true;
@@ -366,10 +423,27 @@ class CorrectionTable extends Component{
             <div>
                 <p>Filter</p>
                 <label>Verified</label>
-                <select onChange={this.onFilterChange }>
+                <select onChange={this.onFilterChangeVerified }>
                     <option selected={this.props.filter.verified=="checked"} value="checked">Checked</option>
                     <option selected={this.props.filter.verified=="unchecked"} value="unchecked">Unchecked</option>
                     <option selected={this.props.filter.verified=="all"} value="all">All</option>
+                </select>
+                <br/>
+
+                <label>Has images</label>
+                <select onChange={this.onFilterChangeImages }>
+                    <option selected={this.props.filter.images=="present"} value="present">Present</option>
+                    <option selected={this.props.filter.images=="absent"} value="absent">Absent</option>
+                    <option selected={this.props.filter.images=="all"} value="all">All</option>
+                </select>
+
+                <br/>
+
+                <label>Has Notes</label>
+                <select onChange={this.onFilterChangeNotes }>
+                    <option selected={this.props.filter.notes=="present"} value="present">Present</option>
+                    <option selected={this.props.filter.notes=="absent"} value="absent">Absent</option>
+                    <option selected={this.props.filter.notes=="all"} value="all">All</option>
                 </select>
 
                 <table id="corrTable" className={"table cell-border"}>
