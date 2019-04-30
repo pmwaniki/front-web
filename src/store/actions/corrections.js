@@ -118,10 +118,12 @@ export const notesChanged=(validation,data,text)=>{
 };
 export const changeHistory=(validation,data)=>{
     return dispatch=>{
+        dispatch(spinnerOpenState(true));
         axios.post(`/api/history/`,{validation:validation,values:data},{headers:{authorization:getToken()}})
             .then(res =>{
                 dispatch(setHistory(validation,res.data));
             });
+        dispatch(spinnerOpenState(false));
     }
 };
 
