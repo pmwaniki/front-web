@@ -79,7 +79,7 @@ class CorrectionTable extends Component{
       return val[0].mapping;
     };
 
-    onCheckHandler=(row)=>{
+    onCheckHandler=(row,checked)=>{
         //console.log("Checkbox clicked",row);
         let data={};
         let val=this.props.unique_fields;
@@ -87,7 +87,7 @@ class CorrectionTable extends Component{
             data[v]=row[v]
         });
         //console.log(data);
-        this.props.toggleChecked(this.props.validation,data);
+        this.props.toggleChecked(this.props.validation,data,checked);
     };
 
     onChangeNotes=(row,text)=>{
@@ -290,8 +290,9 @@ class CorrectionTable extends Component{
             let node=e.target.parentNode;
             let row_index=$(node).data("key");
             let row=table.row(row_index);
-            //console.log("checkbox clicked", row.data());
-            this.onCheckHandler(row.data());
+            let checked=e.target.checked;
+            console.log("checkbox clicked:", checked);
+            this.onCheckHandler(row.data(),checked);
         });
 
 
@@ -494,7 +495,7 @@ const mapStateToProps= state=>{
 
 const mapDispatchToProps=dispatch=>{
     return {
-        toggleChecked: (validation,data)=>dispatch(actions.changeHistory(validation,data)),
+        toggleChecked: (validation,data,checked)=>dispatch(actions.changeHistory(validation,data,checked)),
         notesChanged: (validation,data,text)=>dispatch(actions.notesChanged(validation,data,text)),
         setAllImages:()=>dispatch(actions.getAllImages()),
         setNotesModal: (open)=>dispatch(actions.setNotesModal(open)),

@@ -17,7 +17,7 @@ const setValidations=(data)=>{
 export const getValidations=()=>{
     return dispatch =>{
       //console.log("Getting validations");
-        axios.get("/api/validations/")
+        axios.get("/api2/validations/")
             .then(res => dispatch(setValidations(res.data)));
     }
 };
@@ -74,7 +74,7 @@ const setValidationErrors=(errors)=>{
 
 export const getIssues = (validation,start,stop,hosp)=>{
     return dispatch=>{
-        let query=`/api/issues/?validation=${validation}`;
+        let query=`/api2/issues/?validation=${validation}`;
         if (start !== "") query=query + `&start=${start}`;
         if (stop !== "") query=query + `&stop=${stop}`;
         if(hosp !== "0") query=query + `&hosp=${hosp}`;
@@ -83,7 +83,7 @@ export const getIssues = (validation,start,stop,hosp)=>{
         axios.get(query,{headers:{authorization:getToken()}})
             .then(res_issues => {
 
-                axios.get(`/api/history/?validation=${validation}`,{headers:{authorization:getToken()}})
+                axios.get(`/api2/history/?validation=${validation}`,{headers:{authorization:getToken()}})
                     .then(res_hist=>{
                         dispatch(spinnerOpenState(false));
                         return dispatch(setIssues({history:res_hist.data,issues:res_issues.data}))
@@ -110,20 +110,23 @@ const setHistory=(validation,data)=>{
 };
 export const notesChanged=(validation,data,text)=>{
     return dispatch=>{
-        axios.post(`/api/history/`,{validation:validation,values:data,notes:text},{headers:{authorization:getToken()}})
+        dispatch(spinnerOpenState(true));
+        axios.post(`/api2/history/`,{validation:validation,values:data,notes:text},{headers:{authorization:getToken()}})
             .then(res =>{
                 dispatch(setHistory(validation,res.data));
+                dispatch(spinnerOpenState(false));
             });
     }
 };
-export const changeHistory=(validation,data)=>{
+export const changeHistory=(validation,data,checked)=>{
     return dispatch=>{
         dispatch(spinnerOpenState(true));
-        axios.post(`/api/history/`,{validation:validation,values:data},{headers:{authorization:getToken()}})
+        axios.post(`/api2/history/`,{validation:validation,values:data,checked:checked},{headers:{authorization:getToken()}})
             .then(res =>{
                 dispatch(setHistory(validation,res.data));
+                dispatch(spinnerOpenState(false));
             });
-        dispatch(spinnerOpenState(false));
+
     }
 };
 

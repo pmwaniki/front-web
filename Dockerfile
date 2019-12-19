@@ -14,4 +14,4 @@ RUN npm install
 COPY . .
 
 #build for production
-RUN npm run build --production
+RUN npm run build
