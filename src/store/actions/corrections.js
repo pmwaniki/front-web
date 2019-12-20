@@ -115,6 +115,10 @@ export const notesChanged=(validation,data,text)=>{
             .then(res =>{
                 dispatch(setHistory(validation,res.data));
                 dispatch(spinnerOpenState(false));
+            })
+            .catch(err=>{
+                alert("Could not get or set history");
+                dispatch(spinnerOpenState(false));
             });
     }
 };
@@ -124,6 +128,10 @@ export const changeHistory=(validation,data,checked)=>{
         axios.post(`/api2/history/`,{validation:validation,values:data,checked:checked},{headers:{authorization:getToken()}})
             .then(res =>{
                 dispatch(setHistory(validation,res.data));
+                dispatch(spinnerOpenState(false));
+            })
+            .catch(err=>{
+                alert("Could not get or set history");
                 dispatch(spinnerOpenState(false));
             });
 
