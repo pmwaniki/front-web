@@ -8,12 +8,14 @@ class Spinner extends Component{
         let style={
             modal:{
                 position:'fixed',
-                zIndex:10,
-                top:'56px',
-                right:'50%',
-                //backgroundColor:'blue',
-                width:'50%',
-                height:'50%'
+                zIndex:999,
+                top:'0',
+                right:'0',
+                left:'0',
+                bottom:'0',
+                // backgroundColor:'blue',
+                // width:'50%',
+                // height:'50%'
             }
         };
         return(
