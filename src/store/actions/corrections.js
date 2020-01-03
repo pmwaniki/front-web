@@ -88,17 +88,47 @@ export const getIssues = (validation,start,stop,hosp)=>{
                         dispatch(spinnerOpenState(false));
                         return dispatch(setIssues({history:res_hist.data,issues:res_issues.data}))
                     })
-                    .catch(err=>{
-                        console.log( err);
+                    .catch(error=>{
                         dispatch(spinnerOpenState(false));
-                        alert(err);
+                        if (error.response){
+                            console.log(error.response.data);
+                            console.log(error.response.status);
+                            console.log(error.response.headers);
+                        } else if (error.request) {
+                            // The request was made but no response was received
+                            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                            // http.ClientRequest in node.js
+                            console.log(error.request);
+                        } else {
+                            // Something happened in setting up the request that triggered an Error
+                            console.log('Error', error.message);
+                        }
+
                     })
                 ;
                 })
-            .catch(err => {
-                console.log("Validation fetch failed",err);
-                dispatch(setValidationErrors(err.response.data));
+            .catch(error => {
                 dispatch(spinnerOpenState(false));
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    console.log("Response error",error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                    dispatch(setValidationErrors(error.response.data));
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                    // http.ClientRequest in node.js
+                    console.log("request error:",error.request);
+                    dispatch(setValidationErrors("Request error:Contact site admin"));
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                    dispatch(setValidationErrors(error.message));
+                }
+
+
             });
     }
 };
