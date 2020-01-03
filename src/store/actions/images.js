@@ -19,7 +19,7 @@ const setAllImages=(data)=>{
 
 export const getAllImages=()=>{
     return dispatch =>{
-        axios.get("/api",{headers:{authorization:getToken()}})
+        axios.get("/api2",{headers:{authorization:getToken()}})
             .then(res =>{
                 dispatch(setAllImages(res.data));
             })
@@ -45,7 +45,7 @@ const setAllHospitals=(data)=>{
 
 export const getHospitals=()=>{
     return dispatch=>{
-        axios.get("/api/hospitals/",{headers:{authorization:getToken()}})
+        axios.get("/api2/hospitals/",{headers:{authorization:getToken()}})
             .then( res=>{
                 console.log(res.data);
                 dispatch(setAllHospitals(res.data));
@@ -55,7 +55,7 @@ export const getHospitals=()=>{
 
 export const upload=(image)=>{
     return dipatch=>{
-        let url="/api/new/";
+        let url="/api2/new/";
         let formData=new FormData();
         formData.append('file_path',image.file_path);
         formData.append('record_id',image.record_id);
