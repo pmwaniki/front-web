@@ -90,6 +90,8 @@ export const getIssues = (validation,start,stop,hosp)=>{
                     })
                     .catch(err=>{
                         console.log( err);
+                        dispatch(spinnerOpenState(false));
+                        alert(err);
                     })
                 ;
                 })
