@@ -96,7 +96,7 @@ export const getIssues = (validation,start,stop,hosp)=>{
                 ;
                 })
             .catch(err => {
-                console.log("Validation fetch failed",err.response);
+                console.log("Validation fetch failed",err);
                 dispatch(setValidationErrors(err.response.data));
                 dispatch(spinnerOpenState(false));
             });
