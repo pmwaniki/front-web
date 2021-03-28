@@ -15,7 +15,11 @@ class Corrections extends Component{
             alert("Validation must be set");
             return;
         }
-        this.props.setIssues(this.props.validation,this.props.start,this.props.stop,this.props.hosp);
+        if(this.props.selected_hospitals.length==0){
+            alert("At least one hospital must be selected");
+            return;
+        }
+        this.props.setIssues(this.props.validation,this.props.start,this.props.stop,this.props.selected_hospitals);
 
     };
     changeStart = (e) =>{
@@ -26,6 +30,19 @@ class Corrections extends Component{
     };
     changeHosp=(e)=>{
         this.props.setFilterHospital(e.target.value);
+    };
+    changeHospList=(e)=>{
+        let all_hosp=this.props.selected_hospitals;
+        if(e.target.checked){
+            all_hosp.push(e.target.id)
+        }else{
+            let index=all_hosp.indexOf(e.target.id)
+            if (index > -1){
+                all_hosp.splice(index,1)
+            }
+        }
+        console.log(all_hosp)
+        this.props.setFilterHospitals(all_hosp)
     };
     changeValidation=(e) =>{
         //get unique variables
@@ -61,7 +78,7 @@ class Corrections extends Component{
                     <input className='Date-input' type='date' value={this.props.stop} onChange={(e)=>this.changeStop(e)}/>
                 </div>
 
-                <div className="form-group">
+                {/*<div className="form-group">
                     <label>Hospital</label>
                     <select onChange={this.changeHosp}>
                         <option value={0}>All</option>
@@ -69,6 +86,13 @@ class Corrections extends Component{
                             return <option value={h.id} selected={this.props.hosp===h.id}>{h.name}</option>
                         })}
                     </select>
+                </div>*/}
+
+                <div className="form-group">
+                    <label>Hospitals</label>
+                    {this.props.hospitals.map((h)=>{
+                        return <div><label><input type="checkbox" id={h.id} value={h.id} onChange={this.changeHospList}/> {h.name}</label></div>
+                    },)}
                 </div>
 
 
@@ -96,6 +120,7 @@ const mapStateToProps = state=>{
         stop:state.corrections.stop,
         hosp: state.corrections.hosp,
         hospitals:state.images.hospitals,
+        selected_hospitals:state.corrections.selected_hosp,
     }
 };
 
@@ -107,6 +132,7 @@ const mapDispatchToProps = dispatch =>{
         setStop: (date) => dispatch(actions.setValidationStop(date)),
         setIssues: (validation,start,stop,hosp) => dispatch(actions.getIssues(validation,start,stop,hosp)),
         setFilterHospital: (h)=>dispatch(actions.setFilterHospital(h)),
+        setFilterHospitals: (hospitals)=>dispatch(actions.setFilterHospitals(hospitals)),
     }
 
 };

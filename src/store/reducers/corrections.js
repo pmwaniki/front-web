@@ -14,6 +14,7 @@ const initialState={
     notes_row:{__note__:''},
     filter:{verified:'all',images:"all",notes:"all"},
     hosp:"0",
+    selected_hosp:[],
 };
 
 
@@ -30,6 +31,7 @@ const reducer = (state=initialState,action) =>{
         case actionTypes.SET_NOTES_MODAL: return{...state,notes_modal_open:action.open};
         case actionTypes.SET_FILTER: return{...state,filter:{...state.filter,...action.filter}};
         case actionTypes.SET_FILTER_HOSPITAL: return {...state,hosp:action.hosp_id};
+        case actionTypes.SET_FILTER_HOSPITALS: return {...state,selected_hosp: action.selected_hosp}
         default: return state;
 
     }

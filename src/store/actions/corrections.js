@@ -1,6 +1,7 @@
 import * as actionTypes from "./actionTypes";
 import axios from "axios";
 import {spinnerOpenState} from './index'
+import {SET_FILTER_HOSPITALS} from "./actionTypes";
 
 
 
@@ -41,6 +42,12 @@ export const setFilterHospital=(hosp_id)=>{
     }
 };
 
+export const setFilterHospitals = (selected_hosp)=>{
+    return {
+        type: actionTypes.SET_FILTER_HOSPITALS, selected_hosp:selected_hosp
+    }
+}
+
 export const setFilter=(filter)=>{
     return{
         type:actionTypes.SET_FILTER,
@@ -77,7 +84,13 @@ export const getIssues = (validation,start,stop,hosp)=>{
         let query=`/api2/issues/?validation=${validation}`;
         if (start !== "") query=query + `&start=${start}`;
         if (stop !== "") query=query + `&stop=${stop}`;
-        if(hosp !== "0") query=query + `&hosp=${hosp}`;
+        // if(hosp !== "0") query=query + `&hosp=${hosp}`;
+        query=query + `&hosp=${hosp.join(",")}`;
+        // if (hosp.length==1){
+        //     query=query + `&hosp=${hosp}`;
+        // }else {
+        //     query=query + `&hosp=${hosp.join(",")}`;
+        // }
         dispatch(spinnerOpenState(true));
         dispatch(setValidationErrors(''));
         axios.get(query,{headers:{authorization:getToken()}})

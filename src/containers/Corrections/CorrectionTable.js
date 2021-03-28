@@ -500,7 +500,8 @@ const mapDispatchToProps=dispatch=>{
         setAllImages:()=>dispatch(actions.getAllImages()),
         setNotesModal: (open)=>dispatch(actions.setNotesModal(open)),
         setModalRow: (row)=>dispatch(actions.setModalRow(row)),
-        setFilter: (filter)=>dispatch(actions.setFilter(filter))
+        setFilter: (filter)=>dispatch(actions.setFilter(filter)),
+
     }
 };
 
